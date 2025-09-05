@@ -1,32 +1,20 @@
+
 const express = require('express');
-const mongoose = require('mongoose');
-const { MongoClient, ObjectId } = require('mongodb');
-const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const cors = require('cors');
-
-dotenv.config();
-
+const { MongoClient } = require('mongodb');
 const app = express();
-const PORT = process.env.PORT || 5000;
+app.use(express.json());
 
-// Middleware
-app.use(bodyParser.json());
-app.use(cors());
-
-// MongoDB connection
+const client = new MongoClient(process.env.MONGO_URI);
 let db;
-MongoClient.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(client => {
-        console.log('Connected to MongoDB');
-        db = client.db(); // Set the database connection
-    })
-    .catch(err => console.log(err));
 
-// Define a basic route
-app.get('/', (req, res) => {
-    res.send('Hello, this is your API!');
-});
+async function connectDB() {
+  if (!db) {
+    await client.connect();
+    db = client.db();
+  }
+}
+
+
 
 app.get('/state-data', async (req, res) => {
     try {
@@ -47,6 +35,18 @@ app.post('/get-museum-data', async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+{/*
+app.get('/tickets', async (req, res) => {
+  await connectDB();
+  const tickets = await db.collection('tickets').find().toArray();
+  res.json(tickets);
 });
+
+app.post('/tickets', async (req, res) => {
+  await connectDB();
+  const result = await db.collection('tickets').insertOne(req.body);
+  res.status(201).json(result);
+});
+*/}
+module.exports = app;
