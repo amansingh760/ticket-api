@@ -35,18 +35,4 @@ app.post('/get-museum-data', async (req, res) => {
 });
 
 
-
-{/*
-app.get('/tickets', async (req, res) => {
-  await connectDB();
-  const tickets = await db.collection('tickets').find().toArray();
-  res.json(tickets);
-});
-
-app.post('/tickets', async (req, res) => {
-  await connectDB();
-  const result = await db.collection('tickets').insertOne(req.body);
-  res.status(201).json(result);
-});
-*/}
 module.exports = app;
